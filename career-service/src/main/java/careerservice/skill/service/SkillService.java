@@ -1,10 +1,12 @@
 package careerservice.skill.service;
 
+import careerservice.skill.SkillHasBeenDeleted;
 import careerservice.skill.SkillServicePort;
 import careerservice.skill.command.CreateSkillCommand;
 import careerservice.skill.model.Skill;
 import careerservice.skill.view.SkillView;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,8 @@ public class SkillService implements SkillServicePort {
 
     private SkillMapper skillMapper;
 
+    private ApplicationEventPublisher eventPublisher;
+
     public SkillView create(CreateSkillCommand command) {
         Skill skill = new Skill(command.name());
         skillRepository.save(skill);
@@ -30,9 +34,8 @@ public class SkillService implements SkillServicePort {
 
     @Transactional
     public void deleteSkillById(long id) {
-//        List<AssignedSkill> skills = assignedSkillRepository.findBySkillId(id);
-//        assignedSkillRepository.deleteAll(skills);
         skillRepository.deleteById(id);
+        eventPublisher.publishEvent(new SkillHasBeenDeleted(id));
     }
 
     @Override

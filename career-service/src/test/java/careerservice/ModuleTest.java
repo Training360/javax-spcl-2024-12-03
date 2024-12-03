@@ -2,6 +2,7 @@ package careerservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.modulith.core.ApplicationModules;
+import org.springframework.modulith.docs.Documenter;
 
 public class ModuleTest {
 
@@ -9,5 +10,9 @@ public class ModuleTest {
     void architecture() {
         ApplicationModules modules = ApplicationModules.of(CareerServiceApplication.class);
         modules.verify();
+
+        new Documenter(modules)
+                .writeModulesAsPlantUml()
+                .writeIndividualModulesAsPlantUml();
     }
 }
