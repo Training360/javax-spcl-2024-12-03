@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
+    @Query("select s.id from Skill s where s.id in :skillIds")
+    List<Long> findSkillIdsIn(List<Long> skillIds);
 }

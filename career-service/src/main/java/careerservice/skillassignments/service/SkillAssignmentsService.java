@@ -1,13 +1,17 @@
 package careerservice.skillassignments.service;
 
 import careerservice.NotFoundException;
+import careerservice.skill.SkillServicePort;
+import careerservice.skill.service.SkillService;
 import careerservice.skillassignments.command.AssignSkillsToEmployeeCommand;
+import careerservice.skillassignments.model.LeveledSkill;
 import careerservice.skillassignments.model.SkillAssignments;
 import careerservice.skillassignments.view.EmployeeSkillsView;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,8 +20,18 @@ public class SkillAssignmentsService {
 
     private final SkillAssignmentsRepository skillAssignmentsRepository;
 
+    private final SkillServicePort skillService;
+
     @Transactional
     public EmployeeSkillsView assignSkillToEmployee(AssignSkillsToEmployeeCommand command) {
+
+        List<Long> existingSkillIds = skillService.findSkillIdsIn(
+                command.skills().stream().map(LeveledSkill::skillId).toList()
+        );
+        if (existingSkillIds.size() != command.skills().size()) {
+            throw new IllegalArgumentException("Some skills do not exist");
+        }
+
         Optional<SkillAssignments> skillAssignments = skillAssignmentsRepository.findByEmployeeId(command.employeeId());
         if (skillAssignments.isEmpty()) {
             SkillAssignments hired = SkillAssignments.hire(command.employeeId(), command.skills());
