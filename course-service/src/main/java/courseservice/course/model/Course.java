@@ -3,6 +3,8 @@ package courseservice.course.model;
 import courseservice.course.dto.CreateCourseCommand;
 import courseservice.course.dto.EnrollCommand;
 import courseservice.course.dto.EnrollmentResult;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +14,7 @@ import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Course {
 
     @Id
@@ -36,13 +38,15 @@ public class Course {
     @ElementCollection
     private List<Long> completedEmployees;
 
+    private Course(String name, String description, String syllabus, int limit) {
+        this.name = name;
+        this.description = description;
+        this.syllabus = syllabus;
+        this.limit = limit;
+    }
+
     public static Course announceCourse(CreateCourseCommand command) {
-        var course = new Course();
-        course.setName(command.name());
-        course.setDescription(command.description());
-        course.setSyllabus(command.syllabus());
-        course.setLimit(command.limit());
-        return course;
+        return new Course(command.name(), command.description(), command.syllabus(), command.limit());
     }
 
     public EnrollmentResult enroll(EnrollCommand command) {
