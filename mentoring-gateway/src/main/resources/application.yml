@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: mentoring-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: employees
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/employees/**
+server:
+  port: 8085
