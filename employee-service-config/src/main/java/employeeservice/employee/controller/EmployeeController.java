@@ -23,7 +23,8 @@ public class EmployeeController {
 
     @GetMapping
     public List<EmployeeDto> employees(@RequestHeader HttpHeaders headers) {
-        log.info("Headers: {}", headers);
+        log.info("List employees");
+        log.debug("Headers: {}", headers);
         return employeeService.listEmployees();
     }
 
